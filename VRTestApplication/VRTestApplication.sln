@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VRTestApplication", "VRTestApplication\VRTestApplication.csproj", "{EBA58B74-6887-4635-A629-AC62BBBA8260}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamVR_HUDCenter", "SteamVR_HUDCenter\SteamVR_HUDCenter.csproj", "{18D9AF3E-821B-4C0F-9A8D-D2F10D490302}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EBA58B74-6887-4635-A629-AC62BBBA8260}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBA58B74-6887-4635-A629-AC62BBBA8260}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBA58B74-6887-4635-A629-AC62BBBA8260}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBA58B74-6887-4635-A629-AC62BBBA8260}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18D9AF3E-821B-4C0F-9A8D-D2F10D490302}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18D9AF3E-821B-4C0F-9A8D-D2F10D490302}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18D9AF3E-821B-4C0F-9A8D-D2F10D490302}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18D9AF3E-821B-4C0F-9A8D-D2F10D490302}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
