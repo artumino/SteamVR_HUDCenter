@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace SteamVR_HUDCenter
 {
-    class UDebug
+    public class UDebug
     {
         private enum LogType
         {
@@ -18,7 +18,7 @@ namespace SteamVR_HUDCenter
 
         public static void LogError(object Error)
         {
-            string CallerName = Assembly.GetCallingAssembly().GetName().FullName;
+            string CallerName = Assembly.GetCallingAssembly().GetName().Name;
             if (Error is Exception)
                 Error = ((Exception)Error).Message;
             PlotLog(LogType.Error, CallerName, Error.ToString());
@@ -26,7 +26,7 @@ namespace SteamVR_HUDCenter
 
         public static void Log(object Error)
         {
-            string CallerName = Assembly.GetCallingAssembly().GetName().FullName;
+            string CallerName = Assembly.GetCallingAssembly().GetName().Name;
             if (Error is Exception)
                 Error = ((Exception)Error).Message;
             PlotLog(LogType.Info, CallerName, Error.ToString());
@@ -34,7 +34,7 @@ namespace SteamVR_HUDCenter
 
         public static void LogWarning(object Error)
         {
-            string CallerName = Assembly.GetCallingAssembly().GetName().FullName;
+            string CallerName = Assembly.GetCallingAssembly().GetName().Name;
             if (Error is Exception)
                 Error = ((Exception)Error).Message;
             PlotLog(LogType.Warning, CallerName, Error.ToString());

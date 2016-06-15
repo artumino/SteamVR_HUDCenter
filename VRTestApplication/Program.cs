@@ -14,11 +14,21 @@ namespace VRTestApplication
 {
     class Program
     {
+        public static CVROverlay overlay;
+        public static CVRSystem hmd;
+        public static CVRCompositor compositor;
+        public static SteamVR vr;
+        public static ulong overlayHandle = 0;
+        public static ulong dashOverlayHandle = 1;
+
+        public static bool _IsRunning = false;
+
+        [STAThread]
         static void Main(string[] args)
         {
             GameWindow window = new GameWindow(300, 300);
 
-            SteamVR vr = SteamVR.instance;
+            vr = SteamVR.instance;
 
             EVRInitError error = EVRInitError.None;
 
@@ -41,13 +51,9 @@ namespace VRTestApplication
                 throw new Exception("An error occured while initializing Overlay!");
             }
 
-            CVRSystem hmd = OpenVR.System;
-
-            CVRCompositor compositor = OpenVR.Compositor;
-            CVROverlay overlay = OpenVR.Overlay;
-
-            ulong overlayHandle = 0;
-            ulong dashOverlayHandle = 1;
+            hmd = OpenVR.System;
+            compositor = OpenVR.Compositor;
+            overlay = OpenVR.Overlay;
 
             // Non-dashboard overlay
             EVROverlayError overlayError = overlay.CreateOverlay("overlayTest", "HL3", ref overlayHandle);
@@ -111,7 +117,58 @@ namespace VRTestApplication
 
             overlay.ShowOverlay(overlayHandle);
 
+            System.Threading.Thread OverlayThread = new System.Threading.Thread(new System.Threading.ThreadStart(OverlayCycle));
+            OverlayThread.IsBackground = true;
+            OverlayThread.Start();
             Console.ReadLine();
+            _IsRunning = false;
+        }
+
+        public static void OverlayCycle()
+        {
+            _IsRunning = true;
+            while (_IsRunning)
+            {
+                HandleVRInput(dashOverlayHandle);
+                System.Threading.Thread.Sleep(20);
+            }
+        }
+
+        public static void HandleVRInput(ulong Overlay)
+        {
+            for (uint unDeviceId = 1; unDeviceId < OpenVR.k_unControllerStateAxisCount; unDeviceId++)
+            {
+                if (overlay.HandleControllerOverlayInteractionAsMouse(Overlay, unDeviceId))
+                {
+                    break;
+                }
+            }
+
+            VREvent_t vrEvent = new VREvent_t();
+            while (overlay.PollNextOverlayEvent(Overlay, ref vrEvent, (uint)System.Runtime.InteropServices.Marshal.SizeOf(typeof(VREvent_t))))
+            {
+                switch (vrEvent.eventType)
+                {
+                    case (int)EVREventType.VREvent_MouseMove:
+                        UDebug.Log("Mouse Move!");
+                        break;
+
+                    case (int)EVREventType.VREvent_MouseButtonDown:
+                        UDebug.Log("Mouse Button Down!");
+                        break;
+
+                    case (int)EVREventType.VREvent_MouseButtonUp:
+                        UDebug.Log("Mouse Button Up!");
+                        break;
+                    case (int)EVREventType.VREvent_OverlayShown:
+                        UDebug.Log("Overlay Shown!");
+                        break;
+                    case (int)EVREventType.VREvent_Quit:
+                        _IsRunning = false;
+                        System.Environment.Exit(0);
+                        break;
+                }
+            }
         }
     }
 }
