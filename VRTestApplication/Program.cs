@@ -32,7 +32,7 @@ namespace VRTestApplication
 
             EVRInitError error = EVRInitError.None;
 
-            OpenVR.Init(ref error, EVRApplicationType.VRApplication_Overlay);
+            OpenVR.Init(ref error, EVRApplicationType.VRApplication_Other);
 
             if (error != EVRInitError.None)
             {
@@ -155,6 +155,7 @@ namespace VRTestApplication
 
                     case (int)EVREventType.VREvent_MouseButtonDown:
                         UDebug.Log("Mouse Button Down!");
+                        ToggleNonDashOverlay();
                         break;
 
                     case (int)EVREventType.VREvent_MouseButtonUp:
@@ -169,6 +170,16 @@ namespace VRTestApplication
                         break;
                 }
             }
+        }
+
+        public static bool _isVisible = true;
+        public static void ToggleNonDashOverlay()
+        {
+            if (_isVisible)
+                overlay.HideOverlay(overlayHandle);
+            else
+                overlay.ShowOverlay(overlayHandle);
+            _isVisible = !_isVisible;
         }
     }
 }
