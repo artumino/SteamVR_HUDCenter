@@ -28,5 +28,20 @@ namespace VRTestApplication
         {
             SteamVR_HUDCenter.UDebug.Log("MouseDown " + e.X + "," + e.Y);
         }
+
+        private void button1_MouseClick(object sender, MouseEventArgs e)
+        {
+            SteamVR_HUDCenter.UDebug.Log("Button_MouseClick " + e.X + "," + e.Y);
+        }
+
+        private void button1_MouseEnter(object sender, EventArgs e)
+        {
+            SteamVR_HUDCenter.UDebug.Log("Button_MouseEnter");
+        }
+
+        private void button1_MouseDown(object sender, MouseEventArgs e)
+        {
+            SteamVR_HUDCenter.UDebug.Log("Button_MouseDown " + e.X + "," + e.Y);
+        }
     }
 }

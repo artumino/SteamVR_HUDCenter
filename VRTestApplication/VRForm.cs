@@ -40,9 +40,13 @@ namespace VRTestApplication
         public void SimulateMouseMoveEvent(int x, int y, int delta)
         {
             Invoke(new Action(() => {
-                IntPtr lParam = (IntPtr)((Int32)((Int16)y << 16) + (Int16)x);
-                Message fakeMessage = Message.Create(this.Handle, WM_MOUSEMOVE, (IntPtr)0x0000, lParam);
-                this.WndProc(ref fakeMessage);
+                Control Affected = GetChildAtPoint(new Point(x, y));
+                if (Affected != null)
+                {
+                    IntPtr lParam = (IntPtr)((Int32)((Int16)y << 16) + (Int16)x);
+                    Message fakeMessage = Message.Create(Affected.Handle, WM_MOUSEMOVE, (IntPtr)0x0000, lParam);
+                    this.WndProc(ref fakeMessage);
+                }
             }));
             //this.RaiseMouseEvent("MouseMove", new MouseEventArgs(MouseButtons.None, 0, x, y, delta));
             //OnMouseMove(new MouseEventArgs(MouseButtons.None, 0, x, y, delta));
@@ -65,10 +69,16 @@ namespace VRTestApplication
 
         public void SimulateMouseDownEvent(MouseButtons button, int x, int y, int delta)
         {
-            Invoke(new Action(() => {
-                IntPtr lParam = (IntPtr)((Int32)((Int16)y << 16) + (Int16)x);
-                Message fakeMessage = Message.Create(this.Handle, WM_MOUSEBUTTONDOWN, (IntPtr)ParseButton(button), lParam);
-                this.WndProc(ref fakeMessage);
+            Invoke(new Action(() =>
+            {
+                Point ScreenP = PointToScreen(new Point(x, y));
+                Control Affected = GetChildAtPoint(new Point(x,y));
+                if (Affected != null)
+                {
+                    IntPtr lParam = (IntPtr)((Int32)((Int16)ScreenP.Y << 16) + (Int16)ScreenP.X);
+                    Message fakeMessage = Message.Create(Affected.Handle, WM_MOUSEBUTTONDOWN, (IntPtr)ParseButton(button), lParam);
+                    this.WndProc(ref fakeMessage);
+                }
             }));
             //this.RaiseMouseEvent("MouseDown", new MouseEventArgs(button, 0, x, y, delta));
             //OnMouseDown(new MouseEventArgs(button, 0, x, y, delta));
@@ -76,10 +86,16 @@ namespace VRTestApplication
 
         public void SimulateMouseUpEvent(MouseButtons button, int x, int y, int delta)
         {
-            Invoke(new Action(() => {
-                IntPtr lParam = (IntPtr)((Int32)((Int16)y << 16) + (Int16)x);
-                Message fakeMessage = Message.Create(this.Handle, WM_MOUSEBUTTONUP, (IntPtr)ParseButton(button), lParam);
-                this.WndProc(ref fakeMessage);
+            Invoke(new Action(() =>
+            {
+                Point ScreenP = PointToScreen(new Point(x, y));
+                Control Affected = GetChildAtPoint(new Point(x, y));
+                if (Affected != null)
+                {
+                    IntPtr lParam = (IntPtr)((Int32)((Int16)ScreenP.Y << 16) + (Int16)ScreenP.X);
+                    Message fakeMessage = Message.Create(Affected.Handle, WM_MOUSEBUTTONUP, (IntPtr)ParseButton(button), lParam);
+                    this.WndProc(ref fakeMessage);
+                }
             }));
             //this.RaiseMouseEvent("MouseUp", new MouseEventArgs(button, 0, x, y, delta));
             //OnMouseUp(new MouseEventArgs(button, 0, x, y, delta));
