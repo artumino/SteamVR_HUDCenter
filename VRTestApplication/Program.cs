@@ -55,13 +55,14 @@ namespace VRTestApplication
             compositor = OpenVR.Compositor;
             overlay = OpenVR.Overlay;
 
-            MainOverlay dashOverlay = new MainOverlay("Test", @"./Resources/hl3.jpg", 2.0f, VROverlayInputMethod.Mouse);
+            FormOverlay dashOverlay = new FormOverlay("Test", @"./Resources/hl3.jpg", 2.0f, new TestForm());
             MainOverlay handOverlay = new MainOverlay("handOverlay", 1.0f);
             handOverlay.SetOverlayTransformTrackedDeviceRelative(ETrackedControllerRole.LeftHand);
             
             System.Threading.Thread OverlayThread = new System.Threading.Thread(new System.Threading.ThreadStart(OverlayCycle));
             OverlayThread.IsBackground = true;
             OverlayThread.Start();
+            System.Windows.Forms.Application.Run();
             Console.ReadLine();
             _IsRunning = false;
         }
