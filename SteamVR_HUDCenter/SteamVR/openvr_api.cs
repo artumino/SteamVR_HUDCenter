@@ -3978,6 +3978,7 @@ public class OpenVR
 			m_pVRApplications = null;
 			m_pVRScreenshots = null;
             m_pVRNotifications = null;
+            m_pVRTrackedCamera = null;
         }
 
 		void CheckClear()
@@ -4132,6 +4133,19 @@ public class OpenVR
             return m_pVRNotifications;
         }
 
+        public CVRTrackedCamera VRTrackedCamera()
+        {
+            CheckClear();
+            if (m_pVRTrackedCamera == null)
+            {
+                var eError = EVRInitError.None;
+                var pInterface = OpenVRInterop.GetGenericInterface(FnTable_Prefix + IVRTrackedCamera_Version, ref eError);
+                if (pInterface != IntPtr.Zero && eError == EVRInitError.None)
+                        m_pVRTrackedCamera = new CVRTrackedCamera(pInterface);
+            }
+            return m_pVRTrackedCamera;
+        }
+
         private CVRSystem m_pVRSystem;
 		private CVRChaperone m_pVRChaperone;
 		private CVRChaperoneSetup m_pVRChaperoneSetup;
@@ -4143,6 +4157,7 @@ public class OpenVR
 		private CVRApplications m_pVRApplications;
 		private CVRScreenshots m_pVRScreenshots;
         private CVRNotifications m_pVRNotifications;
+        private CVRTrackedCamera m_pVRTrackedCamera;
         };
 
 	private static COpenVRContext _OpenVRInternal_ModuleContext = null;
@@ -4167,6 +4182,7 @@ public class OpenVR
 	public static CVRExtendedDisplay ExtendedDisplay { get { return OpenVRInternal_ModuleContext.VRExtendedDisplay(); } }
 	public static CVRScreenshots Screenshots { get { return OpenVRInternal_ModuleContext.VRScreenshots(); } }
     public static CVRNotifications Notifications { get { return OpenVRInternal_ModuleContext.VRNotifications(); } }
+    public static CVRTrackedCamera TrackedCamera { get { return OpenVRInternal_ModuleContext.VRTrackedCamera(); } }
 
         /** Finds the active installation of vrclient.dll and initializes it */
         public static CVRSystem Init(ref EVRInitError peError, EVRApplicationType eApplicationType = EVRApplicationType.VRApplication_Scene)
