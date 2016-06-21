@@ -7,14 +7,12 @@ using System.Drawing;
 using System.Windows.Forms;
 
 using Valve.VR;
-using SteamVR_HUDCenter;
-using SteamVR_HUDCenter.Elements;
 using OpenTK.Graphics.OpenGL;
 using System.Threading;
 
-namespace VRTestApplication
+namespace SteamVR_HUDCenter.Elements.Forms
 {
-    class FormOverlay : Overlay
+    public class FormOverlay : Overlay
     {
         public VRForm FormToShow { get; private set; }
         private int? TextureID;
@@ -28,7 +26,7 @@ namespace VRTestApplication
             : base(FriendlyName, ThumbnailPath, Width, VROverlayInputMethod.Mouse)
         {
             this.FormToShow = FormToShow;
-            OnVREvent_MouseButtonDown += MainOverlay_OnVREvent_MouseButtonDown;
+            FormToShow.Overlay = this;
             FormToShow.Show();
             FormToShow.OnVRPaint += FormToShow_OnVRPaint;
         }
@@ -128,17 +126,6 @@ namespace VRTestApplication
             FormTexture.eColorSpace = EColorSpace.Auto;
             FormTexture.handle = (IntPtr)TextureID.Value;
             OpenVR.Overlay.SetOverlayTexture(this.Handle, ref FormTexture);
-        }
-
-        //Event handlers
-        private void MainOverlay_OnVREvent_MouseButtonDown(VREvent_Data_t Data)
-        {
-            foreach (Handlable overlay in OpenVR_Utils.RegisteredItems)
-                if (overlay is Overlay && overlay.Name == "handOverlay")
-                {
-                    ((Overlay)overlay).ToggleVisibility();
-                    break;
-                }
         }
     }
 }

@@ -8,7 +8,9 @@ using System.Drawing;
 using SteamVR_HUDCenter;
 using Valve.VR;
 using OpenTK;
+
 using SteamVR_HUDCenter.Elements;
+using SteamVR_HUDCenter.Elements.Forms;
 
 namespace VRTestApplication
 {
@@ -56,7 +58,7 @@ namespace VRTestApplication
             overlay = OpenVR.Overlay;
 
             FormOverlay dashOverlay = new FormOverlay("Test", @"./Resources/hl3.jpg", 2.0f, new TestForm());
-            MainOverlay handOverlay = new MainOverlay("handOverlay", 1.0f);
+            MainOverlay handOverlay = new MainOverlay("handOverlay", 1.0f, dashOverlay);
             handOverlay.SetOverlayTransformTrackedDeviceRelative(ETrackedControllerRole.LeftHand);
             
             System.Threading.Thread OverlayThread = new System.Threading.Thread(new System.Threading.ThreadStart(OverlayCycle));
@@ -72,7 +74,7 @@ namespace VRTestApplication
             _IsRunning = true;
             while (_IsRunning)
             {
-                foreach(Handlable overlay in OpenVR_Utils.RegisteredItems)
+                foreach(Handlable overlay in OpenVR_Utils.GetRegisteredOverlays())
                     if(overlay is Overlay)
                         HandleVRInput((Overlay)overlay);
                 System.Threading.Thread.Sleep(20);

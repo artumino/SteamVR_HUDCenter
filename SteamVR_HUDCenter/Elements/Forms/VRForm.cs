@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace VRTestApplication
+namespace SteamVR_HUDCenter.Elements.Forms
 {
     public class VRForm : Form
     {
@@ -23,6 +23,9 @@ namespace VRTestApplication
         public const int MK_LBUTTON = 0x0001;
         public const int MK_RBUTTON = 0x0002;
         public const int MK_MBUTTON = 0x0010;
+
+        //Overlay Reference
+        public Overlay Overlay;
 
         public VRForm() : base()
         {

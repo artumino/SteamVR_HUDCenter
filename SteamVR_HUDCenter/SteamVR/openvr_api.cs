@@ -3773,6 +3773,7 @@ public enum EVRScreenshotError
 	public IntPtr m_pVRApplications; // class vr::IVRApplications *
 	public IntPtr m_pVRTrackedCamera; // class vr::IVRTrackedCamera *
 	public IntPtr m_pVRScreenshots; // class vr::IVRScreenshots *
+    public IntPtr m_pVRNotifications; // class vr::IVRNotifications *
 }
 
 public class OpenVR
@@ -3976,7 +3977,8 @@ public class OpenVR
 			m_pVRSettings = null;
 			m_pVRApplications = null;
 			m_pVRScreenshots = null;
-		}
+            m_pVRNotifications = null;
+        }
 
 		void CheckClear()
 		{
@@ -4117,7 +4119,20 @@ public class OpenVR
 			return m_pVRScreenshots;
 		}
 
-		private CVRSystem m_pVRSystem;
+        public CVRNotifications VRNotifications()
+        {
+            CheckClear();
+            if (m_pVRNotifications == null)
+            {
+                var eError = EVRInitError.None;
+                var pInterface = OpenVRInterop.GetGenericInterface(FnTable_Prefix + IVRNotifications_Version, ref eError);
+                if (pInterface != IntPtr.Zero && eError == EVRInitError.None)
+                    m_pVRNotifications = new CVRNotifications(pInterface);
+            }
+            return m_pVRNotifications;
+        }
+
+        private CVRSystem m_pVRSystem;
 		private CVRChaperone m_pVRChaperone;
 		private CVRChaperoneSetup m_pVRChaperoneSetup;
 		private CVRCompositor m_pVRCompositor;
@@ -4127,7 +4142,8 @@ public class OpenVR
 		private CVRSettings m_pVRSettings;
 		private CVRApplications m_pVRApplications;
 		private CVRScreenshots m_pVRScreenshots;
-	};
+        private CVRNotifications m_pVRNotifications;
+        };
 
 	private static COpenVRContext _OpenVRInternal_ModuleContext = null;
 	static COpenVRContext OpenVRInternal_ModuleContext
@@ -4150,9 +4166,10 @@ public class OpenVR
 	public static CVRSettings Settings { get { return OpenVRInternal_ModuleContext.VRSettings(); } }
 	public static CVRExtendedDisplay ExtendedDisplay { get { return OpenVRInternal_ModuleContext.VRExtendedDisplay(); } }
 	public static CVRScreenshots Screenshots { get { return OpenVRInternal_ModuleContext.VRScreenshots(); } }
+    public static CVRNotifications Notifications { get { return OpenVRInternal_ModuleContext.VRNotifications(); } }
 
-	/** Finds the active installation of vrclient.dll and initializes it */
-	public static CVRSystem Init(ref EVRInitError peError, EVRApplicationType eApplicationType = EVRApplicationType.VRApplication_Scene)
+        /** Finds the active installation of vrclient.dll and initializes it */
+        public static CVRSystem Init(ref EVRInitError peError, EVRApplicationType eApplicationType = EVRApplicationType.VRApplication_Scene)
 	{
 		VRToken = InitInternal(ref peError, eApplicationType);
 		OpenVRInternal_ModuleContext.Clear();
