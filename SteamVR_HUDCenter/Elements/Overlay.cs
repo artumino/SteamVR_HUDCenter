@@ -9,7 +9,7 @@ using OpenTK;
 
 namespace SteamVR_HUDCenter.Elements
 {
-    public abstract class Overlay : Handlable
+    public class Overlay : Handlable
     {
         public VROverlayInputMethod InputMethod { get; private set; }
         public float Width { get; private set; }
@@ -165,7 +165,7 @@ namespace SteamVR_HUDCenter.Elements
         }
         #endregion
 
-        public abstract void Start();
-        public abstract void Refresh();
+        public virtual void Start() { }
+        public virtual void Refresh() { }
     }
 }
