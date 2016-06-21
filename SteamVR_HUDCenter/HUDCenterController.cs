@@ -19,14 +19,14 @@ namespace SteamVR_HUDCenter
         private List<uint> Notifications = new List<uint>(1);
 
         [STAThread]
-        public void Init()
+        public void Init(EVRApplicationType ApplicationType)
         {
             //Dummy OpenTK Window
             GameWindow window = new GameWindow(300, 300);
             VR = SteamVR.instance;
 
             EVRInitError error = EVRInitError.None;
-            OpenVR.Init(ref error, EVRApplicationType.VRApplication_Other);
+            OpenVR.Init(ref error, ApplicationType);
 
             if (error != EVRInitError.None)
                 throw new Exception("An error occured while initializing OpenVR!");
@@ -44,8 +44,24 @@ namespace SteamVR_HUDCenter
             OverlayThread.Start();
         }
 
+        public void Init()
+        {
+            Init(EVRApplicationType.VRApplication_Other);
+        }
+
         public void Stop()
         {
+            if (_IsRunning)
+            {
+                //Cleans overlays
+                foreach (Overlay overlay in GetRegisteredOverlays())
+                {
+                    OpenVR.Overlay.ClearOverlayTexture(overlay.Handle);
+                    OpenVR.Overlay.DestroyOverlay(overlay.Handle);
+                }
+                RegisteredItems.Clear();
+                ClearNotifications();
+            }
             _IsRunning = false;
         }
 
