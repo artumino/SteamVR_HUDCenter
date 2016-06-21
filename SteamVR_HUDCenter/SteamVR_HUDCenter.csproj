@@ -52,7 +52,7 @@
     </Compile>
     <Compile Include="Elements\Handlable.cs" />
     <Compile Include="Elements\Overlay.cs" />
-    <Compile Include="OpenVR_Utils.cs" />
+    <Compile Include="HUDCenterController.cs" />
     <Compile Include="OTK_Utils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SteamVR\openvr_api.cs" />

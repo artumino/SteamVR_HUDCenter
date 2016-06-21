@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using SteamVR_HUDCenter;
 using SteamVR_HUDCenter.Elements.Forms;
 
 namespace VRTestApplication
@@ -29,7 +30,7 @@ namespace VRTestApplication
         private void TestForm_MouseDown(object sender, MouseEventArgs e)
         {
             SteamVR_HUDCenter.UDebug.Log("MouseDown " + e.X + "," + e.Y);
-            SteamVR_HUDCenter.OpenVR_Utils.DisplayNotification("Mouse down!", Overlay, Valve.VR.EVRNotificationType.Transient, Valve.VR.EVRNotificationStyle
+            Overlay.Controller.DisplayNotification("Mouse down!", Overlay, Valve.VR.EVRNotificationType.Transient, Valve.VR.EVRNotificationStyle
                 .Application, new Valve.VR.NotificationBitmap_t());
         }
 

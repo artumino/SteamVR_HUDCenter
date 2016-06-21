@@ -10,17 +10,22 @@ namespace SteamVR_HUDCenter.Elements
     {
         public string Name { get; private set; }
         public string Key { get { return String.Format("{0}_{1}", this.GetType().Name, this.Name); } }
+        public HUDCenterController Controller;
         public ulong Handle;
 
         public Handlable(string FriendlyName)
         {
             this.Name = FriendlyName;
-            OpenVR_Utils.RegisterNewItem(this);
         }
 
         public bool Equals(Handlable item)
         {
             return this.Key.Equals(item.Key);
+        }
+
+        public virtual void Init(HUDCenterController Controller)
+        {
+            this.Controller = Controller;
         }
     }
 }

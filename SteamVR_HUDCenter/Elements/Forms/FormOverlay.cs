@@ -125,7 +125,9 @@ namespace SteamVR_HUDCenter.Elements.Forms
             FormTexture.eType = EGraphicsAPIConvention.API_OpenGL;
             FormTexture.eColorSpace = EColorSpace.Auto;
             FormTexture.handle = (IntPtr)TextureID.Value;
-            OpenVR.Overlay.SetOverlayTexture(this.Handle, ref FormTexture);
+
+            if (Controller != null)
+                OpenVR.Overlay.SetOverlayTexture(this.Handle, ref FormTexture);
         }
     }
 }

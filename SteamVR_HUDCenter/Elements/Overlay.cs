@@ -14,6 +14,7 @@ namespace SteamVR_HUDCenter.Elements
         public VROverlayInputMethod InputMethod { get; private set; }
         public float Width { get; private set; }
         public bool IsDashboardWidget { get; private set; }
+        public string ThumbnailPath { get; private set; }
         public Handlable Thumbnail { get; private set; }
         public bool IsVisible { get; private set; }
 
@@ -35,7 +36,10 @@ namespace SteamVR_HUDCenter.Elements
             VROverlayInputMethod InputMethod = VROverlayInputMethod.None)
             : base(FriendlyName) //Registers Item Handle
         {
-            Init(false, "", Width, InputMethod);
+            this.Width = Width;
+            this.IsDashboardWidget = false;
+            this.ThumbnailPath = "";
+            this.InputMethod = InputMethod;
         }
 
         public Overlay(string FriendlyName,
@@ -44,16 +48,15 @@ namespace SteamVR_HUDCenter.Elements
             VROverlayInputMethod InputMethod = VROverlayInputMethod.None) 
             : base(FriendlyName) //Registers Item Handle
         {
-            Init(true, ThumbnailPath, Width, InputMethod);
+            this.Width = Width;
+            this.IsDashboardWidget = true;
+            this.ThumbnailPath = ThumbnailPath;
+            this.InputMethod = InputMethod;
         }
 
-        public void Init(bool IsDashboardWidget = true,
-            string ThumbnailPath = null,
-            float Width = 1.0f,
-            VROverlayInputMethod InputMethod = VROverlayInputMethod.None)
+        public override void Init(HUDCenterController Controller)
         {
-            this.IsDashboardWidget = IsDashboardWidget;
-
+            base.Init(Controller);
 
             EVROverlayError overlayError;
             if (this.IsDashboardWidget)
@@ -79,43 +82,53 @@ namespace SteamVR_HUDCenter.Elements
         public void SetOverlaySize(float Width)
         {
             this.Width = Width;
-            OpenVR.Overlay.SetOverlayWidthInMeters(this.Handle, Width);
+            if(this.Controller != null)
+                OpenVR.Overlay.SetOverlayWidthInMeters(this.Handle, Width);
         }
 
         public void SetOverlayInputMethod(VROverlayInputMethod InputMethod)
         {
             this.InputMethod = InputMethod;
-            OpenVR.Overlay.SetOverlayInputMethod(this.Handle, InputMethod);
+            if (this.Controller != null)
+                OpenVR.Overlay.SetOverlayInputMethod(this.Handle, InputMethod);
         }
 
         public void SetOverlayTransformTrackedDeviceRelative(ETrackedControllerRole Device)
         {
-            OpenVR.Overlay.SetOverlayTransformTrackedDeviceRelative(this.Handle, OpenVR.System.GetTrackedDeviceIndexForControllerRole(Device), ref nmatrix);
+            if (this.Controller != null)
+                OpenVR.Overlay.SetOverlayTransformTrackedDeviceRelative(this.Handle, OpenVR.System.GetTrackedDeviceIndexForControllerRole(Device), ref nmatrix);
         }
 
         public void SetOverlayTransformTrackedDeviceRelative(uint DeviceIndex)
         {
-            OpenVR.Overlay.SetOverlayTransformTrackedDeviceRelative(this.Handle, DeviceIndex, ref nmatrix);
+            if (this.Controller != null)
+                OpenVR.Overlay.SetOverlayTransformTrackedDeviceRelative(this.Handle, DeviceIndex, ref nmatrix);
         }
 
         public void Show()
         {
             this.IsVisible = true;
-            OpenVR.Overlay.ShowOverlay(this.Handle);
+            if (this.Controller != null)
+                OpenVR.Overlay.ShowOverlay(this.Handle);
         }
 
         public void Hide()
         {
             this.IsVisible = false;
-            OpenVR.Overlay.HideOverlay(this.Handle);
+            if (this.Controller != null)
+                OpenVR.Overlay.HideOverlay(this.Handle);
         }
 
         public void ToggleVisibility()
         {
-            if(this.IsVisible)
-                OpenVR.Overlay.HideOverlay(this.Handle);
-            else
-                OpenVR.Overlay.ShowOverlay(this.Handle);
+
+            if (this.Controller != null)
+            {
+                if (this.IsVisible)
+                    OpenVR.Overlay.HideOverlay(this.Handle);
+                else
+                    OpenVR.Overlay.ShowOverlay(this.Handle);
+            }
             this.IsVisible = !this.IsVisible;
         }
         #endregion
