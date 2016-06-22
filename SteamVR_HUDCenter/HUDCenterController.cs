@@ -124,6 +124,12 @@ namespace SteamVR_HUDCenter
             return ID;
         }
 
+        public void CloseNotification(uint ID)
+        {
+            OpenVR.Notifications.RemoveNotification(ID);
+            Notifications.Remove(ID);
+        }
+
         public void ClearNotifications()
         {
             foreach (uint ID in Notifications)
