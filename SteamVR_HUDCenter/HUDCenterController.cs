@@ -145,8 +145,7 @@ namespace SteamVR_HUDCenter
             while (_IsRunning)
             {
                 foreach (Overlay overlay in GetRegisteredOverlays())
-                    if (overlay.InputMethod == VROverlayInputMethod.Mouse)
-                        HandleVRInput(overlay);
+                    HandleVRInput(overlay);
                 System.Threading.Thread.Sleep(20);
             }
         }
@@ -164,22 +163,41 @@ namespace SteamVR_HUDCenter
             VREvent_t vrEvent = new VREvent_t();
             while (OpenVR.Overlay.PollNextOverlayEvent(Overlay.Handle, ref vrEvent, (uint)System.Runtime.InteropServices.Marshal.SizeOf(typeof(VREvent_t))))
             {
+                
                 switch (vrEvent.eventType)
                 {
                     case (int)EVREventType.VREvent_MouseMove:
-                        Overlay.RaiseOnVREvent_MouseMove(vrEvent.data);
+                        Overlay.OnVREvent_MouseMove(vrEvent.data);
                         break;
                     case (int)EVREventType.VREvent_MouseButtonDown:
-                        Overlay.RaiseOnVREvent_MouseButtonDown(vrEvent.data);
+                        Overlay.OnVREvent_MouseButtonDown(vrEvent.data);
                         break;
                     case (int)EVREventType.VREvent_MouseButtonUp:
-                        Overlay.RaiseOnVREvent_MouseButtonUp(vrEvent.data);
+                        Overlay.OnVREvent_MouseButtonUp(vrEvent.data);
                         break;
                     case (int)EVREventType.VREvent_OverlayShown:
-                        Overlay.RaiseOnVREvent_OverlayShown(vrEvent.data);
+                        Overlay.OnVREvent_OverlayShown(vrEvent.data);
                         break;
                     case (int)EVREventType.VREvent_Quit:
-                        Overlay.RaiseOnVREvent_Quit(vrEvent.data);
+                        Overlay.OnVREvent_Quit(vrEvent.data);
+                        break;
+                    case (int)EVREventType.VREvent_ButtonPress:
+                        Overlay.OnVREvent_ButtonPress(vrEvent.data);
+                        break;
+                    case (int)EVREventType.VREvent_ButtonTouch:
+                        Overlay.OnVREvent_ButtonTouch(vrEvent.data);
+                        break;
+                    case (int)EVREventType.VREvent_ButtonUnpress:
+                        Overlay.OnVREvent_ButtonUnpress(vrEvent.data);
+                        break;
+                    case (int)EVREventType.VREvent_ButtonUntouch:
+                        Overlay.OnVREvent_ButtonUntouch(vrEvent.data);
+                        break;
+                    case (int)EVREventType.VREvent_TouchPadMove:
+                        Overlay.OnVREvent_TouchPadMove(vrEvent.data);
+                        break;
+                    case (int)EVREventType.VREvent_Scroll:
+                        Overlay.OnVREvent_Scroll(vrEvent.data);
                         break;
                 }
             }

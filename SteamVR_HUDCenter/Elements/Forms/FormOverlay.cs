@@ -31,11 +31,14 @@ namespace SteamVR_HUDCenter.Elements.Forms
             FormToShow.OnVRPaint += FormToShow_OnVRPaint;
         }
 
-        public override void Start()
+        private void FormOverlay_OnVREvent_MouseButtonDown(VREvent_Data_t Data)
         {
-            OnVREvent_MouseMove += FormOverlay_OnVREvent_MouseMove;
-            OnVREvent_MouseButtonDown += FormOverlay_OnVREvent_MouseButtonDown;
-            OnVREvent_MouseButtonUp += FormOverlay_OnVREvent_MouseButtonUp;
+            throw new NotImplementedException();
+        }
+
+        private void FormOverlay_OnVREvent_MouseButtonUp(VREvent_Data_t Data)
+        {
+            throw new NotImplementedException();
         }
 
         private MouseButtons ParseMouseButton(VREvent_Mouse_t mouse)
@@ -52,17 +55,18 @@ namespace SteamVR_HUDCenter.Elements.Forms
                     return MouseButtons.None;
             }
         }
-        private void FormOverlay_OnVREvent_MouseButtonUp(VREvent_Data_t Data)
+
+        public override void OnVREvent_MouseButtonUp(VREvent_Data_t Data)
         {
             FormToShow.SimulateMouseUpEvent(ParseMouseButton(Data.mouse), (int)(Data.mouse.x * FormToShow.Width), (int)(Data.mouse.y * FormToShow.Height), 0);
         }
 
-        private void FormOverlay_OnVREvent_MouseButtonDown(VREvent_Data_t Data)
+        public override void OnVREvent_MouseButtonDown(VREvent_Data_t Data)
         {
             FormToShow.SimulateMouseDownEvent(ParseMouseButton(Data.mouse), (int)(Data.mouse.x * FormToShow.Width), (int)(Data.mouse.y * FormToShow.Height), 0);
         }
 
-        private void FormOverlay_OnVREvent_MouseMove(VREvent_Data_t Data)
+        public override void OnVREvent_MouseMove(VREvent_Data_t Data)
         {
             FormToShow.SimulateMouseMoveEvent((int)(Data.mouse.x * FormToShow.Width), (int)(Data.mouse.y * FormToShow.Height), 0);
         }
@@ -70,11 +74,6 @@ namespace SteamVR_HUDCenter.Elements.Forms
         private void FormToShow_OnVRPaint(Control control, Point delta, PaintEventArgs e)
         {
             DrawGraphics(control, delta, e);
-        }
-
-        public override void Refresh()
-        {
-
         }
 
         public void DrawGraphics(Control control, Point delta, PaintEventArgs e)
@@ -95,39 +94,44 @@ namespace SteamVR_HUDCenter.Elements.Forms
             }
             //FormToShow.DrawToBitmap(controlImage, new Rectangle(0, 0, FormToShow.Width, FormToShow.Height));
 
-            Bitmap temp = new Bitmap(control.Width, control.Height);
-            try { control.DrawToBitmap(temp, new Rectangle(0, 0, control.Width, control.Height)); }
-            catch(ArgumentException ex) { UDebug.LogWarning(String.Format("Exception drawing {0} control...", control.Name)); }
-            
-            Graphics g = Graphics.FromImage(controlImage);
-            g.DrawImage(temp, delta);
+            using (Bitmap temp = new Bitmap(control.Width, control.Height))
+            {
+                try { control.DrawToBitmap(temp, new Rectangle(0, 0, control.Width, control.Height)); }
+                catch (ArgumentException ex) { UDebug.LogWarning(String.Format("Exception drawing {0} control...", control.Name)); }
 
-            temp = new Bitmap(controlImage);
-            temp.RotateFlip(RotateFlipType.RotateNoneFlipY);
-            System.Drawing.Imaging.BitmapData TextureData =
-            temp.LockBits(
-                    new Rectangle(0, 0, temp.Width, temp.Height),
-                    System.Drawing.Imaging.ImageLockMode.ReadOnly,
-                    System.Drawing.Imaging.PixelFormat.Format32bppArgb
-                );
+                using (Graphics g = Graphics.FromImage(controlImage))
+                    g.DrawImage(temp, delta);
 
-            GL.BindTexture(TextureTarget.Texture2D, TextureID.Value);
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, temp.Width, temp.Height, 0, PixelFormat.Bgra, PixelType.UnsignedByte, TextureData.Scan0);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+                using (Bitmap tempRotation = new Bitmap(controlImage))
+                {
+                    tempRotation.RotateFlip(RotateFlipType.RotateNoneFlipY);
+                    System.Drawing.Imaging.BitmapData TextureData =
+                    tempRotation.LockBits(
+                            new Rectangle(0, 0, tempRotation.Width, tempRotation.Height),
+                            System.Drawing.Imaging.ImageLockMode.ReadOnly,
+                            System.Drawing.Imaging.PixelFormat.Format32bppArgb
+                        );
+
+                    GL.BindTexture(TextureTarget.Texture2D, TextureID.Value);
+                    GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, tempRotation.Width, tempRotation.Height, 0, PixelFormat.Bgra, PixelType.UnsignedByte, TextureData.Scan0);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
 
 
-            temp.UnlockBits(TextureData);
+                    tempRotation.UnlockBits(TextureData);
 
-            FormTexture = new Texture_t();
-            FormTexture.eType = EGraphicsAPIConvention.API_OpenGL;
-            FormTexture.eColorSpace = EColorSpace.Auto;
-            FormTexture.handle = (IntPtr)TextureID.Value;
+                    FormTexture = new Texture_t();
+                    FormTexture.eType = EGraphicsAPIConvention.API_OpenGL;
+                    FormTexture.eColorSpace = EColorSpace.Auto;
+                    FormTexture.handle = (IntPtr)TextureID.Value;
 
-            if (Controller != null)
-                OpenVR.Overlay.SetOverlayTexture(this.Handle, ref FormTexture);
+                    if (Controller != null)
+                        OpenVR.Overlay.SetOverlayTexture(this.Handle, ref FormTexture);
+                }
+                System.GC.Collect(); //Not really optimized
+            }
         }
     }
 }

@@ -18,13 +18,6 @@ namespace SteamVR_HUDCenter.Elements
         public Handlable Thumbnail { get; private set; }
         public bool IsVisible { get; private set; }
 
-        public delegate void VREvent(VREvent_Data_t Data);
-        public event VREvent OnVREvent_MouseMove;
-        public event VREvent OnVREvent_MouseButtonDown;
-        public event VREvent OnVREvent_MouseButtonUp;
-        public event VREvent OnVREvent_OverlayShown;
-        public event VREvent OnVREvent_Quit;
-
         protected HmdMatrix34_t nmatrix = OTK_Utils.OpenTKMatrixToOpenVRMatrix(new Matrix3x4(
                 new Vector4(1, 0, 0, 0),
                 new Vector4(0, 1, 0, 0),
@@ -134,35 +127,17 @@ namespace SteamVR_HUDCenter.Elements
         #endregion
 
         #region Events
-        public void RaiseOnVREvent_MouseMove(VREvent_Data_t Data)
-        {
-            if (OnVREvent_MouseMove != null)
-                OnVREvent_MouseMove.Invoke(Data);
-        }
-
-        public void RaiseOnVREvent_MouseButtonDown(VREvent_Data_t Data)
-        {
-            if (OnVREvent_MouseButtonDown != null)
-                OnVREvent_MouseButtonDown.Invoke(Data);
-        }
-
-        public void RaiseOnVREvent_MouseButtonUp(VREvent_Data_t Data)
-        {
-            if (OnVREvent_MouseButtonUp != null)
-                OnVREvent_MouseButtonUp.Invoke(Data);
-        }
-
-        public void RaiseOnVREvent_OverlayShown(VREvent_Data_t Data)
-        {
-            if (OnVREvent_OverlayShown != null)
-                OnVREvent_OverlayShown.Invoke(Data);
-        }
-
-        public void RaiseOnVREvent_Quit(VREvent_Data_t Data)
-        {
-            if (OnVREvent_Quit != null)
-                OnVREvent_Quit.Invoke(Data);
-        }
+        public virtual void OnVREvent_MouseMove(VREvent_Data_t Data) { }
+        public virtual void OnVREvent_MouseButtonDown(VREvent_Data_t Data) { }
+        public virtual void OnVREvent_MouseButtonUp(VREvent_Data_t Data) { }
+        public virtual void OnVREvent_OverlayShown(VREvent_Data_t Data) { }
+        public virtual void OnVREvent_Quit(VREvent_Data_t Data) { }
+        public virtual void OnVREvent_ButtonPress(VREvent_Data_t Data) { }
+        public virtual void OnVREvent_ButtonTouch(VREvent_Data_t Data) { }
+        public virtual void OnVREvent_ButtonUnpress(VREvent_Data_t Data) { }
+        public virtual void OnVREvent_ButtonUntouch(VREvent_Data_t Data) { }
+        public virtual void OnVREvent_TouchPadMove(VREvent_Data_t Data) { }
+        public virtual void OnVREvent_Scroll(VREvent_Data_t Data) { }
         #endregion
 
         public virtual void Start() { }
