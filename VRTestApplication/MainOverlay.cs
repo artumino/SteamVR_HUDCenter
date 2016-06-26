@@ -23,7 +23,6 @@ namespace VRTestApplication
             VROverlayInputMethod InputMethod = VROverlayInputMethod.None)
             : base(FriendlyName, ThumbnailPath, Width, InputMethod)
         {
-            OnVREvent_MouseButtonDown += MainOverlay_OnVREvent_MouseButtonDown;
             this.OverlayToShow = OverlayToShow;
         }
 
@@ -33,7 +32,6 @@ namespace VRTestApplication
             VROverlayInputMethod InputMethod = VROverlayInputMethod.None)
             : base(FriendlyName, Width, InputMethod)
         {
-            OnVREvent_MouseButtonDown += MainOverlay_OnVREvent_MouseButtonDown;
             this.OverlayToShow = OverlayToShow;
         }
 
@@ -71,7 +69,7 @@ namespace VRTestApplication
         }
 
         //Event handlers
-        private void MainOverlay_OnVREvent_MouseButtonDown(VREvent_Data_t Data)
+        public override void OnVREvent_MouseButtonDown(VREvent_Data_t Data)
         {
             this.OverlayToShow.ToggleVisibility();
         }
