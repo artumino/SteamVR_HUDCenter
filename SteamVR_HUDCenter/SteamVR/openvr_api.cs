@@ -4622,6 +4622,7 @@ namespace Valve.VR
                 m_pVRSettings = null;
                 m_pVRApplications = null;
                 m_pVRScreenshots = null;
+                m_pVRNotifications = null;
                 m_pVRTrackedCamera = null;
             }
 
@@ -4764,6 +4765,19 @@ namespace Valve.VR
                 return m_pVRScreenshots;
             }
 
+            public CVRNotifications VRNotifications()
+            {
+                CheckClear();
+                if (m_pVRNotifications == null)
+                {
+                    var eError = EVRInitError.None;
+                    var pInterface = OpenVRInterop.GetGenericInterface(FnTable_Prefix + IVRNotifications_Version, ref eError);
+                    if (pInterface != IntPtr.Zero && eError == EVRInitError.None)
+                        m_pVRNotifications = new CVRNotifications(pInterface);
+                }
+                return m_pVRNotifications;
+            }
+
             public CVRTrackedCamera VRTrackedCamera()
             {
                 CheckClear();
@@ -4787,6 +4801,7 @@ namespace Valve.VR
             private CVRSettings m_pVRSettings;
             private CVRApplications m_pVRApplications;
             private CVRScreenshots m_pVRScreenshots;
+            private CVRNotifications m_pVRNotifications;
             private CVRTrackedCamera m_pVRTrackedCamera;
         };
 
@@ -4811,6 +4826,7 @@ namespace Valve.VR
         public static CVRSettings Settings { get { return OpenVRInternal_ModuleContext.VRSettings(); } }
         public static CVRApplications Applications { get { return OpenVRInternal_ModuleContext.VRApplications(); } }
         public static CVRScreenshots Screenshots { get { return OpenVRInternal_ModuleContext.VRScreenshots(); } }
+        public static CVRNotifications Notifications { get { return OpenVRInternal_ModuleContext.VRNotifications(); } }
         public static CVRTrackedCamera TrackedCamera { get { return OpenVRInternal_ModuleContext.VRTrackedCamera(); } }
 
         /** Finds the active installation of vrclient.dll and initializes it */
