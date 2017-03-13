@@ -29,7 +29,7 @@ namespace SteamVR_HUDCenter.Elements.Forms
 
         public VRForm() : base()
         {
-            //SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw, true);
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw, true);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -43,10 +43,12 @@ namespace SteamVR_HUDCenter.Elements.Forms
         public void SimulateMouseMoveEvent(int x, int y, int delta)
         {
             Invoke(new Action(() => {
-                Control Affected = GetChildAtPoint(new Point(x, y));
+                Point RelativeP = new Point(x, y);
+                Point ScreenP = PointToScreen(RelativeP);
+                Control Affected = GetChildAtPoint(RelativeP);
                 if (Affected != null)
                 {
-                    IntPtr lParam = (IntPtr)((Int32)((Int16)y << 16) + (Int16)x);
+                    IntPtr lParam = (IntPtr)((Int32)((Int16)RelativeP.Y << 16) + (Int16)RelativeP.X);
                     Message fakeMessage = Message.Create(Affected.Handle, WM_MOUSEMOVE, (IntPtr)0x0000, lParam);
                     this.WndProc(ref fakeMessage);
                 }
@@ -74,11 +76,12 @@ namespace SteamVR_HUDCenter.Elements.Forms
         {
             Invoke(new Action(() =>
             {
-                Point ScreenP = PointToScreen(new Point(x, y));
-                Control Affected = GetChildAtPoint(new Point(x,y));
+                Point RelativeP = new Point(x, y);
+                Point ScreenP = PointToScreen(RelativeP);
+                Control Affected = GetChildAtPoint(RelativeP);
                 if (Affected != null)
                 {
-                    IntPtr lParam = (IntPtr)((Int32)((Int16)ScreenP.Y << 16) + (Int16)ScreenP.X);
+                    IntPtr lParam = (IntPtr)((Int32)((Int16)RelativeP.Y << 16) + (Int16)RelativeP.X);
                     Message fakeMessage = Message.Create(Affected.Handle, WM_MOUSEBUTTONDOWN, (IntPtr)ParseButton(button), lParam);
                     this.WndProc(ref fakeMessage);
                 }
@@ -91,11 +94,12 @@ namespace SteamVR_HUDCenter.Elements.Forms
         {
             Invoke(new Action(() =>
             {
-                Point ScreenP = PointToScreen(new Point(x, y));
-                Control Affected = GetChildAtPoint(new Point(x, y));
+                Point RelativeP = new Point(x, y);
+                Point ScreenP = PointToScreen(RelativeP);
+                Control Affected = GetChildAtPoint(RelativeP);
                 if (Affected != null)
                 {
-                    IntPtr lParam = (IntPtr)((Int32)((Int16)ScreenP.Y << 16) + (Int16)ScreenP.X);
+                    IntPtr lParam = (IntPtr)((Int32)((Int16)RelativeP.Y << 16) + (Int16)RelativeP.X);
                     Message fakeMessage = Message.Create(Affected.Handle, WM_MOUSEBUTTONUP, (IntPtr)ParseButton(button), lParam);
                     this.WndProc(ref fakeMessage);
                 }

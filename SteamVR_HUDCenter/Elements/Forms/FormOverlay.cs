@@ -33,12 +33,10 @@ namespace SteamVR_HUDCenter.Elements.Forms
 
         private void FormOverlay_OnVREvent_MouseButtonDown(VREvent_Data_t Data)
         {
-            throw new NotImplementedException();
         }
 
         private void FormOverlay_OnVREvent_MouseButtonUp(VREvent_Data_t Data)
         {
-            throw new NotImplementedException();
         }
 
         private MouseButtons ParseMouseButton(VREvent_Mouse_t mouse)
@@ -123,7 +121,7 @@ namespace SteamVR_HUDCenter.Elements.Forms
                     tempRotation.UnlockBits(TextureData);
 
                     FormTexture = new Texture_t();
-                    FormTexture.eType = EGraphicsAPIConvention.API_OpenGL;
+                    FormTexture.eType = ETextureType.OpenGL;
                     FormTexture.eColorSpace = EColorSpace.Auto;
                     FormTexture.handle = (IntPtr)TextureID.Value;
 

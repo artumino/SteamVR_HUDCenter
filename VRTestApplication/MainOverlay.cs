@@ -37,7 +37,7 @@ namespace VRTestApplication
 
         public override void Start()
         {
-            Bitmap bmp = new Bitmap(@"./Resources/hl3.jpg");
+            Bitmap bmp = new Bitmap(@"Resources/hl3.jpg");
             int textureID = GL.GenTexture();
 
             System.Drawing.Imaging.BitmapData TextureData =
@@ -57,7 +57,7 @@ namespace VRTestApplication
             bmp.UnlockBits(TextureData);
 
             Texture_t texture = new Texture_t();
-            texture.eType = EGraphicsAPIConvention.API_OpenGL;
+            texture.eType = ETextureType.OpenGL;
             texture.eColorSpace = EColorSpace.Auto;
             texture.handle = (IntPtr)textureID;
             OpenVR.Overlay.SetOverlayTexture(this.Handle, ref texture);

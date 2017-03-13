@@ -12,18 +12,16 @@ namespace SteamVR_HUDCenter
 {
     public class HUDCenterController
     {
-        public SteamVR VR { get; private set; }
         public bool _IsRunning { get; private set;}
 
         private List<Handlable> RegisteredItems = new List<Handlable>(1);
         private List<uint> Notifications = new List<uint>(1);
 
         [STAThread]
-        public void Init(EVRApplicationType ApplicationType)
+        public void Init(EVRApplicationType ApplicationType = EVRApplicationType.VRApplication_Overlay)
         {
             //Dummy OpenTK Window
             GameWindow window = new GameWindow(300, 300);
-            VR = SteamVR.instance;
 
             EVRInitError error = EVRInitError.None;
             OpenVR.Init(ref error, ApplicationType);

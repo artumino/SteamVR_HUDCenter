@@ -24,7 +24,7 @@ namespace VRTestApplication
             VRController = new HUDCenterController();
             VRController.Init();
 
-            FormOverlay dashOverlay = new FormOverlay("Test", @"./Resources/hl3.jpg", 2.0f, new TestForm());
+            FormOverlay dashOverlay = new FormOverlay("Test", @"Resources/white-lambda.png", 2.0f, new TestForm());
             MainOverlay handOverlay = new MainOverlay("handOverlay", 1.0f, dashOverlay);
             VRController.RegisterNewItem(dashOverlay);
             VRController.RegisterNewItem(handOverlay);
