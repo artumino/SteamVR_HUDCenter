@@ -24,11 +24,16 @@ namespace VRTestApplication
             VRController = new HUDCenterController();
             VRController.Init();
 
-            FormOverlay dashOverlay = new FormOverlay("Test", @"Resources/white-lambda.png", 2.0f, new TestForm());
-            MainOverlay handOverlay = new MainOverlay("handOverlay", 1.0f, dashOverlay);
+            FormOverlay dashOverlay = new FormOverlay("Test", @"Resources\white-lambda.png", 2.0f, new TestForm());
+            MainOverlay handOverlay = new MainOverlay("handOverlay", 0.5f, dashOverlay);
             VRController.RegisterNewItem(dashOverlay);
             VRController.RegisterNewItem(handOverlay);
-            handOverlay.SetOverlayTransformTrackedDeviceRelative(ETrackedControllerRole.LeftHand);
+            handOverlay.SetOverlayTransformTrackedDeviceRelative(ETrackedControllerRole.LeftHand, OTK_Utils.OpenTKMatrixToOpenVRMatrix(new Matrix3x4(
+                new Vector4(1, 0, 0, 0),
+                new Vector4(0, -1, 0, 0.1f),
+                new Vector4(0, 0, 1, 0)
+            )));
+            handOverlay.Show();
             System.Windows.Forms.Application.Run();
             Console.ReadLine();
             VRController.Stop();

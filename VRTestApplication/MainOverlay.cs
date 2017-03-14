@@ -37,7 +37,7 @@ namespace VRTestApplication
 
         public override void Start()
         {
-            Bitmap bmp = new Bitmap(@"Resources/hl3.jpg");
+            Bitmap bmp = new Bitmap(@"Resources\hl3.jpg");
             int textureID = GL.GenTexture();
 
             System.Drawing.Imaging.BitmapData TextureData =
@@ -71,7 +71,7 @@ namespace VRTestApplication
         //Event handlers
         public override void OnVREvent_MouseButtonDown(VREvent_Data_t Data)
         {
-            this.OverlayToShow.ToggleVisibility();
+            this.Controller.DisplayNotification("H3LLO WORLD", this, EVRNotificationType.Transient, EVRNotificationStyle.Contact_Active, new NotificationBitmap_t());
         }
     }
 }

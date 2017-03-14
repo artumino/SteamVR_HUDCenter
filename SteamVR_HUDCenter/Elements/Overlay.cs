@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 using Valve.VR;
 using OpenTK;
@@ -14,11 +15,11 @@ namespace SteamVR_HUDCenter.Elements
         public VROverlayInputMethod InputMethod { get; private set; }
         public float Width { get; private set; }
         public bool IsDashboardWidget { get; private set; }
-        public string ThumbnailPath { get; private set; }
+        public FileInfo ThumbnailPath { get; private set; }
         public Handlable Thumbnail { get; private set; }
         public bool IsVisible { get; private set; }
 
-        protected HmdMatrix34_t nmatrix = OTK_Utils.OpenTKMatrixToOpenVRMatrix(new Matrix3x4(
+        protected HmdMatrix34_t identity = OTK_Utils.OpenTKMatrixToOpenVRMatrix(new Matrix3x4(
                 new Vector4(1, 0, 0, 0),
                 new Vector4(0, 1, 0, 0),
                 new Vector4(0, 0, 1, 0)
@@ -31,7 +32,7 @@ namespace SteamVR_HUDCenter.Elements
         {
             this.Width = Width;
             this.IsDashboardWidget = false;
-            this.ThumbnailPath = "";
+            this.ThumbnailPath = null;
             this.InputMethod = InputMethod;
         }
 
@@ -43,7 +44,7 @@ namespace SteamVR_HUDCenter.Elements
         {
             this.Width = Width;
             this.IsDashboardWidget = true;
-            this.ThumbnailPath = ThumbnailPath;
+            this.ThumbnailPath = new FileInfo(ThumbnailPath);
             this.InputMethod = InputMethod;
         }
 
@@ -56,7 +57,12 @@ namespace SteamVR_HUDCenter.Elements
             {
                 //If this is a Dashboard Widget, Create a Thumbnail item
                 Thumbnail = new Handlable(this.Name + "_Thumbnail");
-                OpenVR.Overlay.SetOverlayFromFile(Thumbnail.Handle, ThumbnailPath);
+
+                if (this.ThumbnailPath.Exists)
+                    OpenVR.Overlay.SetOverlayFromFile(Thumbnail.Handle, ThumbnailPath.FullName);
+                else
+                    OpenVR.Overlay.SetOverlayFromFile(Thumbnail.Handle, null);
+
                 overlayError = OpenVR.Overlay.CreateDashboardOverlay(this.Key, this.Name, ref this.Handle, ref this.Thumbnail.Handle);
             }
             else
@@ -88,14 +94,24 @@ namespace SteamVR_HUDCenter.Elements
 
         public void SetOverlayTransformTrackedDeviceRelative(ETrackedControllerRole Device)
         {
+            SetOverlayTransformTrackedDeviceRelative(Device, identity);
+        }
+
+        public void SetOverlayTransformTrackedDeviceRelative(ETrackedControllerRole Device, HmdMatrix34_t matrix)
+        {
             if (this.Controller != null)
-                OpenVR.Overlay.SetOverlayTransformTrackedDeviceRelative(this.Handle, OpenVR.System.GetTrackedDeviceIndexForControllerRole(Device), ref nmatrix);
+                OpenVR.Overlay.SetOverlayTransformTrackedDeviceRelative(this.Handle, OpenVR.System.GetTrackedDeviceIndexForControllerRole(Device), ref matrix);
         }
 
         public void SetOverlayTransformTrackedDeviceRelative(uint DeviceIndex)
         {
+            SetOverlayTransformTrackedDeviceRelative(DeviceIndex, identity);
+        }
+
+        public void SetOverlayTransformTrackedDeviceRelative(uint DeviceIndex, HmdMatrix34_t matrix)
+        {
             if (this.Controller != null)
-                OpenVR.Overlay.SetOverlayTransformTrackedDeviceRelative(this.Handle, DeviceIndex, ref nmatrix);
+                OpenVR.Overlay.SetOverlayTransformTrackedDeviceRelative(this.Handle, DeviceIndex, ref matrix);
         }
 
         public void Show()
