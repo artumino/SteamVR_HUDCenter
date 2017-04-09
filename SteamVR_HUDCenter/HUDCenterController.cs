@@ -12,10 +12,20 @@ namespace SteamVR_HUDCenter
 {
     public class HUDCenterController
     {
+        //Instance of the current VRController
+        private static HUDCenterController instance;
+
         public bool _IsRunning { get; private set;}
 
         private List<Handlable> RegisteredItems = new List<Handlable>(1);
         private List<uint> Notifications = new List<uint>(1);
+
+        public static HUDCenterController GetInstance()
+        {
+            if (instance == null)
+                instance = new HUDCenterController();
+            return instance;
+        }
 
         [STAThread]
         public void Init(EVRApplicationType ApplicationType = EVRApplicationType.VRApplication_Overlay)
@@ -51,14 +61,17 @@ namespace SteamVR_HUDCenter
         {
             if (_IsRunning)
             {
-                //Cleans overlays
-                foreach (Overlay overlay in GetRegisteredOverlays())
+                lock (RegisteredItems)
                 {
-                    OpenVR.Overlay.ClearOverlayTexture(overlay.Handle);
-                    OpenVR.Overlay.DestroyOverlay(overlay.Handle);
+                    //Cleans overlays
+                    foreach (Overlay overlay in GetRegisteredOverlays())
+                    {
+                        OpenVR.Overlay.ClearOverlayTexture(overlay.Handle);
+                        OpenVR.Overlay.DestroyOverlay(overlay.Handle);
+                    }
+                    RegisteredItems.Clear();
+                    ClearNotifications();
                 }
-                RegisteredItems.Clear();
-                ClearNotifications();
             }
             _IsRunning = false;
         }
@@ -67,11 +80,14 @@ namespace SteamVR_HUDCenter
         //Register new item to our list, this method is purely used to avoid duplicates in our list
         public void RegisterNewItem(Handlable item)
         {
-            if (RegisteredItems.Contains<Handlable>(item))
-                throw new Exception("Item with the same name and type already registered.");
-            AssingHandle(item);
-            RegisteredItems.Add(item);
-            item.Init(this);
+            lock (RegisteredItems)
+            {
+                if (RegisteredItems.Contains<Handlable>(item))
+                    throw new Exception("Item with the same name and type already registered.");
+                AssingHandle(item);
+                RegisteredItems.Add(item);
+                item.Init(this);
+            }
         }
 
         public IEnumerable<Overlay> GetRegisteredOverlays()
@@ -86,12 +102,16 @@ namespace SteamVR_HUDCenter
             do
             {
                 item.Handle = (ulong)rnd.Next();
-                foreach (Handlable hd in RegisteredItems)
-                    if (hd.Handle == item.Handle)
-                    {
-                        item.Handle = 0;
-                        break;
-                    }
+
+                lock (RegisteredItems)
+                {
+                    foreach (Handlable hd in RegisteredItems)
+                        if (hd.Handle == item.Handle)
+                        {
+                            item.Handle = 0;
+                            break;
+                        }
+                }
             } while (item.Handle == 0);
         }
 
@@ -142,8 +162,11 @@ namespace SteamVR_HUDCenter
             _IsRunning = true;
             while (_IsRunning)
             {
-                foreach (Overlay overlay in GetRegisteredOverlays())
-                    HandleVRInput(overlay);
+                lock (RegisteredItems)
+                {
+                    foreach (Overlay overlay in GetRegisteredOverlays())
+                        HandleVRInput(overlay);
+                }
                 System.Threading.Thread.Sleep(20);
             }
         }
