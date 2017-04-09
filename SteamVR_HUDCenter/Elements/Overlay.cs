@@ -56,7 +56,7 @@ namespace SteamVR_HUDCenter.Elements
             if (this.IsDashboardWidget)
             {
                 //If this is a Dashboard Widget, Create a Thumbnail item
-                Thumbnail = new Handlable(this.Name + "_Thumbnail");
+                Thumbnail = new Handlable(this.Key + this.Name + "_Thumbnail");
 
                 if (this.ThumbnailPath.Exists)
                     OpenVR.Overlay.SetOverlayFromFile(Thumbnail.Handle, ThumbnailPath.FullName);
